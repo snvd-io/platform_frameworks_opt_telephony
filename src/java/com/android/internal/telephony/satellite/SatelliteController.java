@@ -4628,15 +4628,7 @@ public class SatelliteController extends Handler {
                 mSessionStartTimeStamp = 0;
                 mSessionProcessingTimeStamp = 0;
             } else {
-                /*
-                 * Unregister Importance Listener for Pointing UI when Satellite is disabled
-                 */
-                synchronized (mNeedsSatellitePointingLock) {
-                    if (mNeedsSatellitePointing) {
-                        mPointingAppController.removeListenerForPointingUI();
-                    }
-                }
-                moveSatelliteToOffStateAndCleanUpResources(SATELLITE_RESULT_MODEM_TIMEOUT, null);
+                notifyEnablementFailedToSatelliteSessionController();
                 mControllerMetricsStats.onSatelliteDisabled();
                 mWaitingForDisableSatelliteModemResponse = false;
                 mWaitingForSatelliteModemOff = false;
