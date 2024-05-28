@@ -275,6 +275,8 @@ public class SatelliteController extends Handler {
             new AtomicBoolean(false);
     private final AtomicBoolean mIsModemEnabledReportingNtnSignalStrength =
             new AtomicBoolean(false);
+    private final AtomicBoolean mLatestRequestedStateForNtnSignalStrengthReport =
+            new AtomicBoolean(false);
     private final AtomicBoolean mRegisteredForSatelliteSupportedStateChanged =
             new AtomicBoolean(false);
     /**
@@ -1015,6 +1017,7 @@ public class SatelliteController extends Handler {
                         }
                     }
                     // Request Ntn signal strength report when satellite enabled or disabled done.
+                    mLatestRequestedStateForNtnSignalStrengthReport.set(argument.enableSatellite);
                     updateNtnSignalStrengthReporting(argument.enableSatellite);
                 } else {
                     synchronized (mSatelliteEnabledRequestLock) {
@@ -1375,6 +1378,13 @@ public class SatelliteController extends Handler {
                                 + shouldReport);
                 if (errorCode == SATELLITE_RESULT_SUCCESS) {
                     mIsModemEnabledReportingNtnSignalStrength.set(shouldReport);
+                    if (mLatestRequestedStateForNtnSignalStrengthReport.get()
+                            != mIsModemEnabledReportingNtnSignalStrength.get()) {
+                        logd("mLatestRequestedStateForNtnSignalStrengthReport does not match with "
+                                + "mIsModemEnabledReportingNtnSignalStrength");
+                        updateNtnSignalStrengthReporting(
+                                mLatestRequestedStateForNtnSignalStrengthReport.get());
+                    }
                 } else {
                     loge(((boolean) request.argument ? "startSendingNtnSignalStrength"
                             : "stopSendingNtnSignalStrength") + "returns " + errorCode);
@@ -4182,9 +4192,12 @@ public class SatelliteController extends Handler {
                         mCarrierRoamingSatelliteSessionStatsMap.get(subId);
 
                 if (serviceState.isUsingNonTerrestrialNetwork()) {
-                    if (sessionStats != null && !mWasSatelliteConnectedViaCarrier.get(subId)) {
-                        // Log satellite connection start
-                        sessionStats.onConnectionStart();
+                    if (sessionStats != null) {
+                        sessionStats.onSignalStrength(phone);
+                        if (!mWasSatelliteConnectedViaCarrier.get(subId)) {
+                            // Log satellite connection start
+                            sessionStats.onConnectionStart();
+                        }
                     }
 
                     resetCarrierRoamingSatelliteModeParams(subId);
@@ -4253,8 +4266,8 @@ public class SatelliteController extends Handler {
             if (!lastNotifiedNtnMode && currNtnMode) {
                 // Log satellite session start
                 CarrierRoamingSatelliteSessionStats sessionStats =
-                        new CarrierRoamingSatelliteSessionStats(mContext, phone.getCarrierId());
-                sessionStats.onSessionStart();
+                        CarrierRoamingSatelliteSessionStats.getInstance(subId);
+                sessionStats.onSessionStart(phone.getCarrierId());
                 mCarrierRoamingSatelliteSessionStatsMap.put(subId, sessionStats);
             } else if (lastNotifiedNtnMode && !currNtnMode) {
                 // Log satellite session end
@@ -4473,6 +4486,7 @@ public class SatelliteController extends Handler {
             return;
         }
 
+        mLatestRequestedStateForNtnSignalStrengthReport.set(shouldReport);
         if (mIsModemEnabledReportingNtnSignalStrength.get() == shouldReport) {
             logd("handleCmdUpdateNtnSignalStrengthReporting: ignore request. "
                     + "mIsModemEnabledReportingNtnSignalStrength="
