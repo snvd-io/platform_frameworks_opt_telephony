@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ComponentInfo;
 import android.os.Binder;
 import android.os.Handler;
+import android.os.Process;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -676,15 +677,17 @@ public class EuiccCardController extends IEuiccCardController.Stub {
     @Override
     public void resetMemory(String callingPackage, String cardId,
             @EuiccCardManager.ResetOption int options, IResetMemoryCallback callback) {
-        try {
-            checkCallingPackage(callingPackage);
-        } catch (SecurityException se) {
+        if (Binder.getCallingUid() != Process.SYSTEM_UID) {
             try {
-                callback.onComplete(EuiccCardManager.RESULT_CALLER_NOT_ALLOWED);
-            } catch (RemoteException re) {
-                loge("callback onComplete failure after checkCallingPackage.", re);
+                checkCallingPackage(callingPackage);
+            } catch (SecurityException se) {
+                try {
+                    callback.onComplete(EuiccCardManager.RESULT_CALLER_NOT_ALLOWED);
+                } catch (RemoteException re) {
+                    loge("callback onComplete failure after checkCallingPackage.", re);
+                }
+                return;
             }
-            return;
         }
 
         EuiccPort port = getFirstActiveEuiccPort(cardId);
