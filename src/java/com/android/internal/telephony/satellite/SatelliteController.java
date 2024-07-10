@@ -2903,8 +2903,9 @@ public class SatelliteController extends Handler {
             return true;
         }
 
-        if (getWwanIsInService(serviceState)) {
-            // Device is connected to terrestrial network which has coverage
+        if (getWwanIsInService(serviceState)
+                || serviceState.getState() == ServiceState.STATE_POWER_OFF) {
+            // Device is connected to terrestrial network which has coverage or radio is turned off
             resetCarrierRoamingSatelliteModeParams(subId);
             return false;
         }
@@ -4414,7 +4415,8 @@ public class SatelliteController extends Handler {
                     }
                 } else {
                     Boolean connected = mWasSatelliteConnectedViaCarrier.get(subId);
-                    if (getWwanIsInService(serviceState)) {
+                    if (getWwanIsInService(serviceState)
+                            || serviceState.getState() == ServiceState.STATE_POWER_OFF) {
                         resetCarrierRoamingSatelliteModeParams(subId);
                     } else if (connected != null && connected) {
                         // The device just got disconnected from a satellite network
