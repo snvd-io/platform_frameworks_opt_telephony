@@ -19,6 +19,7 @@ package com.android.internal.telephony.satellite;
 import static android.provider.Settings.ACTION_SATELLITE_SETTING;
 import static android.telephony.CarrierConfigManager.CARRIER_ROAMING_NTN_CONNECT_MANUAL;
 import static android.telephony.CarrierConfigManager.KEY_CARRIER_ROAMING_NTN_CONNECT_TYPE_INT;
+import static android.telephony.CarrierConfigManager.KEY_CARRIER_ROAMING_NTN_EMERGENCY_CALL_TO_SATELLITE_HANDOVER_TYPE_INT;
 import static android.telephony.CarrierConfigManager.KEY_CARRIER_ROAMING_SATELLITE_DEFAULT_SERVICES_INT_ARRAY;
 import static android.telephony.CarrierConfigManager.KEY_CARRIER_SUPPORTED_SATELLITE_NOTIFICATION_HYSTERESIS_SEC_INT;
 import static android.telephony.CarrierConfigManager.KEY_CARRIER_SUPPORTED_SATELLITE_SERVICES_PER_PROVIDER_BUNDLE;
@@ -4206,6 +4207,7 @@ public class SatelliteController extends Handler {
                     KEY_SATELLITE_ESOS_SUPPORTED_BOOL,
                     KEY_CARRIER_ROAMING_NTN_CONNECT_TYPE_INT,
                     KEY_CARRIER_SUPPORTED_SATELLITE_NOTIFICATION_HYSTERESIS_SEC_INT,
+                    KEY_CARRIER_ROAMING_NTN_EMERGENCY_CALL_TO_SATELLITE_HANDOVER_TYPE_INT,
                     KEY_SATELLITE_SCREEN_OFF_INACTIVITY_TIMEOUT_SEC_INT
             );
         }
@@ -4343,6 +4345,11 @@ public class SatelliteController extends Handler {
 
     private int getCarrierRoamingNtnConnectType(int subId) {
         return getConfigForSubId(subId).getInt(KEY_CARRIER_ROAMING_NTN_CONNECT_TYPE_INT);
+    }
+
+    protected int getCarrierRoamingNtnEmergencyCallToSatelliteHandoverType(int subId) {
+        return getConfigForSubId(subId).getInt(
+                KEY_CARRIER_ROAMING_NTN_EMERGENCY_CALL_TO_SATELLITE_HANDOVER_TYPE_INT);
     }
 
     /**
