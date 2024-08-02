@@ -912,6 +912,8 @@ public class SubscriptionManagerService extends ISub.Stub {
      * @param subId The subscription id.
      */
     public void setCountryIso(int subId, @NonNull String iso) {
+        logl("setCountryIso: subId=" + subId + ", iso=" + iso);
+
         // This can throw IllegalArgumentException if the subscription does not exist.
         try {
             mSubscriptionDatabaseManager.setCountryIso(subId, iso);
@@ -928,6 +930,8 @@ public class SubscriptionManagerService extends ISub.Stub {
      * @param carrierName The carrier name.
      */
     public void setCarrierName(int subId, @NonNull String carrierName) {
+        logl("setCarrierName: subId=" + subId + ", carrierName=" + carrierName);
+
         // This can throw IllegalArgumentException if the subscription does not exist.
         try {
             mSubscriptionDatabaseManager.setCarrierName(subId, carrierName);
@@ -999,6 +1003,9 @@ public class SubscriptionManagerService extends ISub.Stub {
      * @param numberFromIms The phone number retrieved from IMS.
      */
     public void setNumberFromIms(int subId, @NonNull String numberFromIms) {
+        logl("setNumberFromIms: subId=" + subId + ", number="
+                + Rlog.pii(TelephonyUtils.IS_DEBUGGABLE, numberFromIms));
+
         // This can throw IllegalArgumentException if the subscription does not exist.
         try {
             mSubscriptionDatabaseManager.setNumberFromIms(subId, numberFromIms);
@@ -4006,6 +4013,9 @@ public class SubscriptionManagerService extends ISub.Stub {
     @RequiresPermission("carrier privileges")
     public void setPhoneNumber(int subId, @PhoneNumberSource int source, @NonNull String number,
             @NonNull String callingPackage, @Nullable String callingFeatureId) {
+        logl("setPhoneNumber: subId=" + subId + ", number="
+                + Rlog.pii(TelephonyUtils.IS_DEBUGGABLE, number)
+                + ", calling package=" + callingPackage);
         if (!TelephonyPermissions.checkCarrierPrivilegeForSubId(mContext, subId)) {
             throw new SecurityException("setPhoneNumber for CARRIER needs carrier privilege.");
         }
