@@ -3902,10 +3902,20 @@ public class SubscriptionManagerService extends ISub.Stub {
         switch(source) {
             case SubscriptionManager.PHONE_NUMBER_SOURCE_UICC:
                 final Phone phone = PhoneFactory.getPhone(getSlotIndex(subId));
-                if (phone != null) {
-                    return TextUtils.emptyIfNull(phone.getLine1Number());
-                } else {
+                if (mFeatureFlags.uiccPhoneNumberFix()) {
+                    if (phone != null) {
+                        String number = phone.getLine1Number();
+                        if (!TextUtils.isEmpty(number)) {
+                            return number;
+                        }
+                    }
                     return subInfo.getNumber();
+                } else {
+                    if (phone != null) {
+                        return TextUtils.emptyIfNull(phone.getLine1Number());
+                    } else {
+                        return subInfo.getNumber();
+                    }
                 }
             case SubscriptionManager.PHONE_NUMBER_SOURCE_CARRIER:
                 return subInfo.getNumberFromCarrier();
