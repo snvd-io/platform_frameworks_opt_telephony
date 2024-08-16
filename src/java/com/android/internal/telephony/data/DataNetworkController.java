@@ -3643,8 +3643,7 @@ public class DataNetworkController extends Handler {
             dataNetwork.startHandover(targetTransport, dataHandoverRetryEntry);
         } else if (dataNetwork.shouldDelayImsTearDownDueToInCall()
                 && (dataEvaluation.containsOnly(DataDisallowedReason.NOT_IN_SERVICE)
-                || mFeatureFlags.relaxHoTeardown() && dataEvaluation.isSubsetOf(
-                        DataDisallowedReason.NOT_IN_SERVICE,
+                || dataEvaluation.isSubsetOf(DataDisallowedReason.NOT_IN_SERVICE,
                         DataDisallowedReason.NOT_ALLOWED_BY_POLICY))) {
             // We try our best to preserve the voice call by retrying later
             if (dataHandoverRetryEntry != null) {

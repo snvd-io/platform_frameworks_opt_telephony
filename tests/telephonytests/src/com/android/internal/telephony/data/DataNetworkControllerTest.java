@@ -2841,7 +2841,6 @@ public class DataNetworkControllerTest extends TelephonyTest {
 
     @Test
     public void testHandoverDataNetworkNotAllowedByPolicyDelayDueToVoiceCall() throws Exception {
-        doReturn(true).when(mFeatureFlags).relaxHoTeardown();
         // Config delay IMS tear down enabled
         mCarrierConfig.putBoolean(CarrierConfigManager.KEY_DELAY_IMS_TEAR_DOWN_UNTIL_CALL_END_BOOL,
                 true);
