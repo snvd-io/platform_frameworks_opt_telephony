@@ -95,8 +95,17 @@ public class HalVersion implements Comparable<HalVersion> {
         return less(ver) || equals(ver);
     }
 
+    /**
+     * @return True if the version is between (excluding the two provided versions)
+     */
+    public boolean between(HalVersion greaterThan, HalVersion lessThan) {
+        return greater(greaterThan) && less(lessThan);
+    }
+
     @Override
     public String toString() {
+        if (equals(UNSUPPORTED)) return "UNSUPPORTED";
+        if (equals(UNKNOWN)) return "UNKNOWN";
         return major + "." + minor;
     }
 }
