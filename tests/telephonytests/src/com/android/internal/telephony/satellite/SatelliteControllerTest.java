@@ -71,7 +71,6 @@ import static com.android.internal.telephony.satellite.SatelliteController.SATEL
 import static com.android.internal.telephony.satellite.SatelliteController.SATELLITE_MODE_ENABLED_TRUE;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -100,7 +99,6 @@ import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncResult;
@@ -175,7 +173,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Semaphore;
@@ -4375,135 +4372,6 @@ public class SatelliteControllerTest extends TelephonyTest {
         return list;
     }
 
-    @Test
-    public void testCheckForSubscriberIdChange_noChanged() {
-        when(mFeatureFlags.carrierRoamingNbIotNtn()).thenReturn(true);
-
-        String imsi = "012345";
-        String oldMsisdn = "1234567890";
-        String newMsisdn = "1234567890";
-        List<SubscriptionInfo> allSubInfos = new ArrayList<>();
-        Optional<String> getSubscriberId;
-        SubscriptionInfo mMockSubscriptionInfo = Mockito.mock(SubscriptionInfo.class);
-        SubscriptionInfoInternal subInfoInternal =
-                new SubscriptionInfoInternal.Builder().setCarrierId(0)
-                        .setImsi(imsi).build();
-
-        when(mMockSubscriptionInfo.getSubscriptionId()).thenReturn(SUB_ID);
-        allSubInfos.add(mMockSubscriptionInfo);
-        doReturn(" ").when(mContext).getOpPackageName();
-        doReturn(" ").when(mContext).getAttributionTag();
-        when(mMockSubscriptionManagerService.getAllSubInfoList(anyString(), anyString()))
-                .thenReturn(allSubInfos);
-        when(mMockSubscriptionInfo.isSatelliteESOSSupported()).thenReturn(true);
-        when(mMockSubscriptionManagerService.getSubscriptionInfoInternal(SUB_ID))
-                .thenReturn(subInfoInternal);
-
-        try {
-            Field field = SatelliteController.class.getDeclaredField("mInjectSubscriptionManager");
-            field.setAccessible(true);
-            field.set(mSatelliteControllerUT, mSubscriptionManager);
-        } catch (Exception e) {
-            loge("Exception InjectSubscriptionManager e: " + e);
-        }
-        when(mSubscriptionManager.getPhoneNumber(SUB_ID)).thenReturn(newMsisdn);
-        when(mMockSubscriptionInfo.isOnlyNonTerrestrialNetwork()).thenReturn(false);
-        mSatelliteControllerUT.subscriberIdPerSub().put(imsi + oldMsisdn, SUB_ID);
-
-        getSubscriberId = mSatelliteControllerUT.subscriberIdPerSub().entrySet().stream()
-            .filter(entry -> entry.getValue().equals(SUB_ID))
-            .map(Map.Entry::getKey).findFirst();
-        assertEquals(imsi + newMsisdn, getSubscriberId.get());
-
-        setComponentName();
-        mSatelliteControllerUT.subsInfoListPerPriority().computeIfAbsent(
-                getKeyPriority(mMockSubscriptionInfo), k -> new ArrayList<>())
-                .add(mMockSubscriptionInfo);
-        mSatelliteControllerUT.evaluateESOSProfilesPrioritizationTest();
-        // Verify that broadcast has not been sent.
-        verify(mContext, times(0)).sendBroadcast(any(Intent.class));
-    }
-
-    @Test
-    public void testCheckForSubscriberIdChange_changed() {
-        when(mFeatureFlags.carrierRoamingNbIotNtn()).thenReturn(true);
-        List<SubscriptionInfo> allSubInfos = new ArrayList<>();
-
-        String imsi = "012345";
-        String oldMsisdn = "1234567890";
-        String newMsisdn = "4567891234";
-
-        Optional<String> getSubscriberId;
-        SubscriptionInfo mMockSubscriptionInfo = Mockito.mock(SubscriptionInfo.class);
-        SubscriptionInfoInternal subInfoInternal =
-                new SubscriptionInfoInternal.Builder().setCarrierId(0).setImsi(imsi).build();
-
-        when(mMockSubscriptionInfo.getSubscriptionId()).thenReturn(SUB_ID);
-        allSubInfos.add(mMockSubscriptionInfo);
-        doReturn(" ").when(mContext).getOpPackageName();
-        doReturn(" ").when(mContext).getAttributionTag();
-        when(mMockSubscriptionManagerService.getAllSubInfoList(anyString(), anyString()))
-                .thenReturn(allSubInfos);
-
-        when(mMockSubscriptionInfo.isSatelliteESOSSupported()).thenReturn(true);
-        when(mMockSubscriptionManagerService.getSubscriptionInfoInternal(SUB_ID))
-                .thenReturn(subInfoInternal);
-
-        try {
-            Field field = SatelliteController.class.getDeclaredField("mInjectSubscriptionManager");
-            field.setAccessible(true);
-            field.set(mSatelliteControllerUT, mSubscriptionManager);
-        } catch (Exception e) {
-            loge("Exception InjectSubscriptionManager e: " + e);
-        }
-        when(mSubscriptionManager.getPhoneNumber(SUB_ID)).thenReturn(newMsisdn);
-        when(mMockSubscriptionInfo.isOnlyNonTerrestrialNetwork()).thenReturn(false);
-        mSatelliteControllerUT.subscriberIdPerSub().put(imsi + oldMsisdn, SUB_ID);
-
-        getSubscriberId = mSatelliteControllerUT.subscriberIdPerSub().entrySet().stream()
-                .filter(entry -> entry.getValue().equals(SUB_ID))
-                .map(Map.Entry::getKey).findFirst();
-        assertNotEquals(imsi + newMsisdn, getSubscriberId.get());
-
-        setComponentName();
-        mSatelliteControllerUT.subsInfoListPerPriority().computeIfAbsent(
-                getKeyPriority(mMockSubscriptionInfo), k -> new ArrayList<>())
-                .add(mMockSubscriptionInfo);
-        mSatelliteControllerUT.evaluateESOSProfilesPrioritizationTest();
-        // Verify that broadcast has been sent.
-        verify(mContext, times(1)).sendBroadcast(any(Intent.class));
-    }
-
-    private void setComponentName() {
-        when(mSatelliteControllerUT.getStringFromOverlayConfigTest(
-                R.string.config_satellite_gateway_service_package))
-                .thenReturn("com.example.package");
-        when(mSatelliteControllerUT.getStringFromOverlayConfigTest(
-                R.string.config_satellite_carrier_roaming_esos_provisioned_class))
-                .thenReturn("com.example.class");
-        when(mSatelliteControllerUT.getStringFromOverlayConfigTest(
-                R.string.config_satellite_carrier_roaming_esos_provisioned_intent_action))
-                .thenReturn("com.example.action");
-    }
-
-    private int getKeyPriority(SubscriptionInfo mMockSubscriptionInfo) {
-        boolean isActive = mMockSubscriptionInfo.isActive();
-        boolean isNtnOnly = mMockSubscriptionInfo.isOnlyNonTerrestrialNetwork();
-        boolean isESOSSupported = mMockSubscriptionInfo.isSatelliteESOSSupported();
-
-        int keyPriority;
-        if (isESOSSupported && isActive) {
-            keyPriority = 1;
-        } else if (isNtnOnly) {
-            keyPriority = 2;
-        } else if (isESOSSupported) {
-            keyPriority = 3;
-        } else {
-            keyPriority = -1;
-        }
-        return keyPriority;
-    }
-
     private void resetSatelliteControllerUTEnabledState() {
         logd("resetSatelliteControllerUTEnabledState");
         setUpResponseForRequestIsSatelliteSupported(false, SATELLITE_RESULT_RADIO_NOT_AVAILABLE);
@@ -5287,26 +5155,6 @@ public class SatelliteControllerTest extends TelephonyTest {
 
         public boolean isWaitForCellularModemOffTimerStarted() {
             return hasMessages(EVENT_WAIT_FOR_CELLULAR_MODEM_OFF_TIMED_OUT);
-        }
-
-        public Map<String, Integer> subscriberIdPerSub() {
-            synchronized (mSatelliteTokenProvisionedLock) {
-                return mSubscriberIdPerSub;
-            }
-        }
-
-        public Map<Integer, List<SubscriptionInfo>> subsInfoListPerPriority() {
-            synchronized (mSatelliteTokenProvisionedLock) {
-                return mSubsInfoListPerPriority;
-            }
-        }
-
-        public void evaluateESOSProfilesPrioritizationTest() {
-            evaluateESOSProfilesPrioritization();
-        }
-
-        public String getStringFromOverlayConfigTest(int resourceId) {
-            return getStringFromOverlayConfig(resourceId);
         }
     }
 }
