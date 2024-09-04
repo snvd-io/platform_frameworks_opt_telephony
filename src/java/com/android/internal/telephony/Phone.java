@@ -486,6 +486,7 @@ public abstract class Phone extends Handler implements PhoneInternalInterface {
     private static final String ALLOWED_NETWORK_TYPES_TEXT_POWER = "power";
     private static final String ALLOWED_NETWORK_TYPES_TEXT_CARRIER = "carrier";
     private static final String ALLOWED_NETWORK_TYPES_TEXT_ENABLE_2G = "enable_2g";
+    private static final String ALLOWED_NETWORK_TYPES_TEXT_TEST = "test";
     private static final int INVALID_ALLOWED_NETWORK_TYPES = -1;
     protected boolean mIsCarrierNrSupported = false;
     protected boolean mIsAllowedNetworkTypesLoadedFromDb = false;
@@ -2512,6 +2513,8 @@ public abstract class Phone extends Handler implements PhoneInternalInterface {
                 return TelephonyManager.ALLOWED_NETWORK_TYPES_REASON_CARRIER;
             case ALLOWED_NETWORK_TYPES_TEXT_ENABLE_2G:
                 return TelephonyManager.ALLOWED_NETWORK_TYPES_REASON_ENABLE_2G;
+            case ALLOWED_NETWORK_TYPES_TEXT_TEST:
+                return TelephonyManager.ALLOWED_NETWORK_TYPES_REASON_TEST;
             default:
                 return INVALID_ALLOWED_NETWORK_TYPES;
         }
@@ -2535,6 +2538,8 @@ public abstract class Phone extends Handler implements PhoneInternalInterface {
                 return ALLOWED_NETWORK_TYPES_TEXT_CARRIER;
             case TelephonyManager.ALLOWED_NETWORK_TYPES_REASON_ENABLE_2G:
                 return ALLOWED_NETWORK_TYPES_TEXT_ENABLE_2G;
+            case TelephonyManager.ALLOWED_NETWORK_TYPES_REASON_TEST:
+                return ALLOWED_NETWORK_TYPES_TEXT_TEST;
             default:
                 throw new IllegalArgumentException(
                         "No DB name conversion available for allowed network type reason: " + reason
