@@ -218,17 +218,6 @@ flag {
     }
 }
 
-# OWNER=rambowang TARGET=24Q4
-flag {
-    name: "support_phone_uid_check_for_multiuser"
-    namespace: "telephony"
-    description: "Check phone/system processes from UID with multiuser-aware way"
-    bug:"328511085"
-    metadata {
-        purpose: PURPOSE_BUGFIX
-    }
-}
-
 # OWNER=joonhunshin TARGET=24Q4
 flag {
     name: "use_carrier_config_for_cfnry_time_via_mmi"
