@@ -29,13 +29,13 @@ import static android.telephony.CarrierConfigManager.KEY_EMERGENCY_MESSAGING_SUP
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ATTACH_SUPPORTED_BOOL;
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_CONNECTION_HYSTERESIS_SEC_INT;
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ENTITLEMENT_SUPPORTED_BOOL;
-import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ESOS_INACTIVITY_TIMEOUT_SEC_INT;
+import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ROAMING_ESOS_INACTIVITY_TIMEOUT_SEC_INT;
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ESOS_SUPPORTED_BOOL;
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_NIDD_APN_NAME_STRING;
-import static android.telephony.CarrierConfigManager.KEY_SATELLITE_P2P_SMS_INACTIVITY_TIMEOUT_SEC_INT;
+import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ROAMING_P2P_SMS_INACTIVITY_TIMEOUT_SEC_INT;
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ROAMING_P2P_SMS_SUPPORTED_BOOL;
 import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ROAMING_TURN_OFF_SESSION_FOR_EMERGENCY_CALL_BOOL;
-import static android.telephony.CarrierConfigManager.KEY_SATELLITE_SCREEN_OFF_INACTIVITY_TIMEOUT_SEC_INT;
+import static android.telephony.CarrierConfigManager.KEY_SATELLITE_ROAMING_SCREEN_OFF_INACTIVITY_TIMEOUT_SEC_INT;
 import static android.telephony.SubscriptionManager.SATELLITE_ATTACH_ENABLED_FOR_CARRIER;
 import static android.telephony.SubscriptionManager.SATELLITE_ENTITLEMENT_STATUS;
 import static android.telephony.SubscriptionManager.isValidSubscriptionId;
@@ -4342,9 +4342,9 @@ public class SatelliteController extends Handler {
                     KEY_CARRIER_ROAMING_NTN_CONNECT_TYPE_INT,
                     KEY_CARRIER_SUPPORTED_SATELLITE_NOTIFICATION_HYSTERESIS_SEC_INT,
                     KEY_CARRIER_ROAMING_NTN_EMERGENCY_CALL_TO_SATELLITE_HANDOVER_TYPE_INT,
-                    KEY_SATELLITE_SCREEN_OFF_INACTIVITY_TIMEOUT_SEC_INT,
-                    KEY_SATELLITE_P2P_SMS_INACTIVITY_TIMEOUT_SEC_INT,
-                    KEY_SATELLITE_ESOS_INACTIVITY_TIMEOUT_SEC_INT
+                    KEY_SATELLITE_ROAMING_SCREEN_OFF_INACTIVITY_TIMEOUT_SEC_INT,
+                    KEY_SATELLITE_ROAMING_P2P_SMS_INACTIVITY_TIMEOUT_SEC_INT,
+                    KEY_SATELLITE_ROAMING_ESOS_INACTIVITY_TIMEOUT_SEC_INT
             );
         }
         if (config == null || config.isEmpty()) {
