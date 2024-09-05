@@ -1106,7 +1106,7 @@ public class SatelliteSessionControllerTest extends TelephonyTest {
         moveSatelliteToEnablingState();
 
         // Satellite enablement has failed
-        mTestSatelliteSessionController.onSatelliteEnablementFailed();
+        mTestSatelliteSessionController.onSatelliteEnablementFailed(true);
         processAllMessages();
 
         // Satellite should move back to POWER_OFF state
@@ -1361,7 +1361,7 @@ public class SatelliteSessionControllerTest extends TelephonyTest {
         moveSatelliteToDisablingState();
 
         // Satellite disabled request failed
-        mTestSatelliteSessionController.onSatelliteEnablementFailed();
+        mTestSatelliteSessionController.onSatelliteEnablementFailed(false);
         processAllMessages();
 
         // Satellite should stay in previous state as satellite disable request failed
