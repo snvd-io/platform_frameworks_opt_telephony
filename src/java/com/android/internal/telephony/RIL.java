@@ -949,8 +949,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
                         break;
                 }
 
-                if (serviceProxy.isEmpty() && mHalVersion.get(service).between(
-                        RADIO_HAL_VERSION_UNSUPPORTED, RADIO_HAL_VERSION_2_0)) {
+                if (serviceProxy.isEmpty()
+                        && mHalVersion.get(service).less(RADIO_HAL_VERSION_2_0)) {
                     try {
                         mHalVersion.put(service, RADIO_HAL_VERSION_1_6);
                         serviceProxy.setHidl(mHalVersion.get(service),
@@ -960,8 +960,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
                     }
                 }
 
-                if (serviceProxy.isEmpty() && mHalVersion.get(service).between(
-                        RADIO_HAL_VERSION_UNSUPPORTED, RADIO_HAL_VERSION_2_0)) {
+                if (serviceProxy.isEmpty()
+                        && mHalVersion.get(service).less(RADIO_HAL_VERSION_2_0)) {
                     try {
                         mHalVersion.put(service, RADIO_HAL_VERSION_1_5);
                         serviceProxy.setHidl(mHalVersion.get(service),
@@ -971,8 +971,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
                     }
                 }
 
-                if (serviceProxy.isEmpty() && mHalVersion.get(service).between(
-                        RADIO_HAL_VERSION_UNSUPPORTED, RADIO_HAL_VERSION_2_0)) {
+                if (serviceProxy.isEmpty()
+                        && mHalVersion.get(service).less(RADIO_HAL_VERSION_2_0)) {
                     try {
                         mHalVersion.put(service, RADIO_HAL_VERSION_1_4);
                         serviceProxy.setHidl(mHalVersion.get(service),
@@ -982,8 +982,8 @@ public class RIL extends BaseCommands implements CommandsInterface {
                     }
                 }
 
-                if (serviceProxy.isEmpty() && mHalVersion.get(service).between(
-                            RADIO_HAL_VERSION_UNKNOWN, RADIO_HAL_VERSION_2_0)) {
+                if (serviceProxy.isEmpty()
+                        && mHalVersion.get(service).less(RADIO_HAL_VERSION_2_0)) {
                     riljLoge("IRadio <1.4 is no longer supported.");
                 }
 
@@ -1047,16 +1047,10 @@ public class RIL extends BaseCommands implements CommandsInterface {
                     }
                 } else {
                     mDisabledRadioServices.get(service).add(mPhoneId);
-                    if (isRadioServiceSupported(service)) {
-                        mHalVersion.put(service, RADIO_HAL_VERSION_UNKNOWN);
-                        riljLoge("getRadioServiceProxy: set " + serviceToString(service) + " for "
-                                + HIDL_SERVICE_NAME[mPhoneId] + " as disabled\n"
-                                + android.util.Log.getStackTraceString(new RuntimeException()));
-                    } else {
-                        mHalVersion.put(service, RADIO_HAL_VERSION_UNSUPPORTED);
-                        riljLog("getRadioServiceProxy: set " + serviceToString(service) + " for "
-                                + HIDL_SERVICE_NAME[mPhoneId] + " as disabled (unsupported)");
-                    }
+                    mHalVersion.put(service, RADIO_HAL_VERSION_UNKNOWN);
+                    riljLoge("getRadioServiceProxy: set " + serviceToString(service) + " for "
+                            + HIDL_SERVICE_NAME[mPhoneId] + " as disabled\n"
+                            + android.util.Log.getStackTraceString(new RuntimeException()));
                 }
             }
         } catch (RemoteException e) {
@@ -1617,8 +1611,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
     @Override
     public void supplySimDepersonalization(PersoSubState persoType, String controlKey,
             Message result) {
-        if (mHalVersion.get(HAL_SERVICE_SIM).between(
-                    RADIO_HAL_VERSION_UNKNOWN, RADIO_HAL_VERSION_1_5)
+        if (mHalVersion.get(HAL_SERVICE_SIM).less(RADIO_HAL_VERSION_1_5)
                 && PersoSubState.PERSOSUBSTATE_SIM_NETWORK == persoType) {
             supplyNetworkDepersonalization(controlKey, result);
             return;
@@ -3019,8 +3012,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
     @Override
     public void setAllowedNetworkTypesBitmap(
             @TelephonyManager.NetworkTypeBitMask int networkTypeBitmask, Message result) {
-        if (mHalVersion.get(HAL_SERVICE_NETWORK).between(
-                RADIO_HAL_VERSION_UNKNOWN, RADIO_HAL_VERSION_1_6)) {
+        if (mHalVersion.get(HAL_SERVICE_NETWORK).less(RADIO_HAL_VERSION_1_6)) {
             // For older HAL, redirects the call to setPreferredNetworkType.
             setPreferredNetworkType(
                     RadioAccessFamily.getNetworkTypeFromRaf(networkTypeBitmask), result);
