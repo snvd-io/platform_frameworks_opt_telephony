@@ -4032,6 +4032,7 @@ public class SatelliteController extends Handler {
                     && mProvisionedSubscriberId.containsValue(Boolean.TRUE);
             mControllerMetricsStats.setIsProvisioned(isProvisioned);
         }
+        handleStateChangedForCarrierRoamingNtnEligibility();
     }
 
     private void notifySatelliteSubscriptionProvisionStateChanged(
