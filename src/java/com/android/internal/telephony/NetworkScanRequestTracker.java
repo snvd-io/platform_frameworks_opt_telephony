@@ -568,7 +568,7 @@ public final class NetworkScanRequestTracker {
         //   3. The live scan is not requested by mobile network setting menu
         private synchronized boolean interruptLiveScan(NetworkScanRequestInfo nsri) {
             if (mLiveRequestInfo != null && mPendingRequestInfo == null
-                    && !UserHandle.isSameApp(nsri.mUid, Process.SYSTEM_UID)
+                    && UserHandle.isSameApp(nsri.mUid, Process.SYSTEM_UID)
                             && !UserHandle.isSameApp(mLiveRequestInfo.mUid, Process.SYSTEM_UID)) {
                 doInterruptScan(mLiveRequestInfo.mScanId);
                 mPendingRequestInfo = nsri;
